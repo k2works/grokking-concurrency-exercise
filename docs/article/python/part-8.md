@@ -24,26 +24,25 @@ MapReduce は、大規模データを並列処理するためのプログラミ�
 
 ### 処理フロー
 
-```
-Input Data
-    │
-    ▼
-┌─────────┐
-│   Map   │  各データに関数を適用
-└─────────┘
-    │
-    ▼
-┌─────────┐
-│ Shuffle │  キーでグループ化
-└─────────┘
-    │
-    ▼
-┌─────────┐
-│ Reduce  │  グループごとに集約
-└─────────┘
-    │
-    ▼
-Output Data
+```plantuml
+@startuml
+!theme plain
+
+rectangle "Input Data" as input
+rectangle "Map" as map #LightBlue
+rectangle "Shuffle" as shuffle #LightYellow
+rectangle "Reduce" as reduce #LightGreen
+rectangle "Output Data" as output
+
+input --> map
+map --> shuffle
+shuffle --> reduce
+reduce --> output
+
+note right of map : 各データに関数を適用
+note right of shuffle : キーでグループ化
+note right of reduce : グループごとに集約
+@enduml
 ```
 
 ---
@@ -235,20 +234,25 @@ of: 1
 
 ### マスター・ワーカー構成
 
-```
-┌──────────────┐
-│   Scheduler  │  タスク分配
-└──────────────┘
-       │
-       ▼
-┌──────────────┐
-│    Master    │  コーディネーション
-└──────────────┘
-    │  │  │
-    ▼  ▼  ▼
-┌────┐┌────┐┌────┐
-│ W1 ││ W2 ││ W3 │  ワーカー
-└────┘└────┘└────┘
+```plantuml
+@startuml
+!theme plain
+
+rectangle "Scheduler" as sched #LightBlue
+rectangle "Master" as master #LightYellow
+rectangle "Worker 1" as w1 #LightGreen
+rectangle "Worker 2" as w2 #LightGreen
+rectangle "Worker 3" as w3 #LightGreen
+
+sched --> master : タスク分配
+master --> w1 : コーディネーション
+master --> w2
+master --> w3
+
+note right of sched : タスク分配
+note right of master : コーディネーション
+note bottom of w1 : ワーカー
+@enduml
 ```
 
 ### ワーカーの実装例

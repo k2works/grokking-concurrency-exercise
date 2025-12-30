@@ -26,12 +26,33 @@ dateCreated: 2025-12-30T09:00:00.000Z
 
 CPU 時間を小さなスライスに分割し、各タスクに順番に割り当てます。
 
-```
-Time →
-┌─────┬─────┬─────┬─────┬─────┬─────┐
-│ T1  │ T2  │ T3  │ T1  │ T2  │ T3  │
-└─────┴─────┴─────┴─────┴─────┴─────┘
-       ↑ コンテキストスイッチ
+```plantuml
+@startuml
+!theme plain
+title タイムシェアリング
+
+concise "CPU" as cpu
+
+@0
+cpu is "T1"
+
+@1
+cpu is "T2"
+
+@2
+cpu is "T3"
+
+@3
+cpu is "T1"
+
+@4
+cpu is "T2"
+
+@5
+cpu is "T3"
+
+@1 <-> @2 : コンテキストスイッチ
+@enduml
 ```
 
 ---
@@ -156,11 +177,24 @@ def render_next_screen() -> None:
 - メモリキャッシュの無効化
 - TLB（Translation Lookaside Buffer）のフラッシュ
 
-```
-タスク切り替えのオーバーヘッド
-├── 状態保存: ~数マイクロ秒
-├── スケジューラ実行: ~数マイクロ秒
-└── 状態復元: ~数マイクロ秒
+```plantuml
+@startuml
+!theme plain
+title タスク切り替えのオーバーヘッド
+
+rectangle "コンテキストスイッチ" {
+  card "状態保存" as save #LightBlue
+  card "スケジューラ実行" as sched #LightYellow
+  card "状態復元" as restore #LightGreen
+}
+
+note bottom of save : ~数マイクロ秒
+note bottom of sched : ~数マイクロ秒
+note bottom of restore : ~数マイクロ秒
+
+save --> sched
+sched --> restore
+@enduml
 ```
 
 ---

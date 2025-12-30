@@ -22,8 +22,20 @@ dateCreated: 2025-12-30T09:00:00.000Z
 
 逐次処理は、タスクを一つずつ順番に実行する最も基本的な処理方式です。
 
-```
-タスク1 → タスク2 → タスク3 → 完了
+```plantuml
+@startuml
+!theme plain
+left to right direction
+
+rectangle "タスク1" as t1
+rectangle "タスク2" as t2
+rectangle "タスク3" as t3
+rectangle "完了" as done
+
+t1 --> t2
+t2 --> t3
+t3 --> done
+@enduml
 ```
 
 ### パスワードクラッキングの例
@@ -174,24 +186,44 @@ print(f"PROCESS TIME: {process_time}")
 
 8桁のパスワードクラッキングでは、1億通りの組み合わせを順番にチェックします。
 
-```
-CPU使用率: ████░░░░░░░░ 25% (1コアのみ使用)
+```plantuml
+@startuml
+!theme plain
+title 逐次処理: CPU使用率 25%
 
-コア1: [処理中...]
-コア2: [アイドル]
-コア3: [アイドル]
-コア4: [アイドル]
+rectangle "CPU" {
+  rectangle "コア1" as c1 #LightGreen
+  rectangle "コア2" as c2 #LightGray
+  rectangle "コア3" as c3 #LightGray
+  rectangle "コア4" as c4 #LightGray
+}
+
+note right of c1 : 処理中...
+note right of c2 : アイドル
+note right of c3 : アイドル
+note right of c4 : アイドル
+@enduml
 ```
 
 4コア CPU があっても、逐次処理では1コアしか使用されません。並行処理を使えば、複数コアに作業を分散できます。
 
-```
-CPU使用率: ████████████ 100% (全コア使用)
+```plantuml
+@startuml
+!theme plain
+title 並行処理: CPU使用率 100%
 
-コア1: [00000000-24999999]
-コア2: [25000000-49999999]
-コア3: [50000000-74999999]
-コア4: [75000000-99999999]
+rectangle "CPU" {
+  rectangle "コア1" as c1 #LightGreen
+  rectangle "コア2" as c2 #LightGreen
+  rectangle "コア3" as c3 #LightGreen
+  rectangle "コア4" as c4 #LightGreen
+}
+
+note right of c1 : 00000000-24999999
+note right of c2 : 25000000-49999999
+note right of c3 : 50000000-74999999
+note right of c4 : 75000000-99999999
+@enduml
 ```
 
 ---

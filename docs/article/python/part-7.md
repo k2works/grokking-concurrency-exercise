@@ -143,10 +143,19 @@ Future は、まだ完了していない非同期操作の結果を表すオブ�
 
 ### Future の状態
 
-```
-Pending → Finished/Cancelled
-             ↓
-         Result/Exception
+```plantuml
+@startuml
+!theme plain
+
+state Pending
+state Finished
+state Cancelled
+
+Pending --> Finished : 成功
+Pending --> Cancelled : キャンセル
+Finished --> [*] : Result
+Cancelled --> [*] : Exception
+@enduml
 ```
 
 ### Future の使用例

@@ -97,13 +97,30 @@ if __name__ == "__main__":
 
 ### Fork/Join の流れ
 
-```
-        ┌─── Worker 1 ──→ 部分結果1 ───┐
-        │                              │
-Input ──┼─── Worker 2 ──→ 部分結果2 ───┼──→ 統合結果
-        │                              │
-        └─── Worker 3 ──→ 部分結果3 ───┘
-         Fork                        Join
+```plantuml
+@startuml
+!theme plain
+left to right direction
+
+rectangle "Input" as input
+rectangle "Worker 1" as w1
+rectangle "Worker 2" as w2
+rectangle "Worker 3" as w3
+rectangle "部分結果1" as r1
+rectangle "部分結果2" as r2
+rectangle "部分結果3" as r3
+rectangle "統合結果" as result
+
+input --> w1 : Fork
+input --> w2
+input --> w3
+w1 --> r1
+w2 --> r2
+w3 --> r3
+r1 --> result : Join
+r2 --> result
+r3 --> result
+@enduml
 ```
 
 ---
@@ -208,17 +225,44 @@ if __name__ == "__main__":
 
 ### パイプラインの流れ
 
-```
-Time →
-┌────────┬────────┬────────┬────────┐
-│ Wash 1 │ Wash 2 │ Wash 3 │ Wash 4 │  Washer
-└────────┴────────┴────────┴────────┘
-         ┌────────┬────────┬────────┬────────┐
-         │ Dry 1  │ Dry 2  │ Dry 3  │ Dry 4  │  Dryer
-         └────────┴────────┴────────┴────────┘
-                  ┌────────┬────────┬────────┬────────┐
-                  │ Fold 1 │ Fold 2 │ Fold 3 │ Fold 4 │  Folder
-                  └────────┴────────┴────────┴────────┘
+```plantuml
+@startuml
+!theme plain
+title パイプラインパターン
+
+concise "Washer" as washer
+concise "Dryer" as dryer
+concise "Folder" as folder
+
+@0
+washer is "Wash 1"
+
+@4
+washer is "Wash 2"
+dryer is "Dry 1"
+
+@8
+washer is "Wash 3"
+dryer is "Dry 2"
+folder is "Fold 1"
+
+@12
+washer is "Wash 4"
+dryer is "Dry 3"
+folder is "Fold 2"
+
+@16
+washer is {-}
+dryer is "Dry 4"
+folder is "Fold 3"
+
+@20
+dryer is {-}
+folder is "Fold 4"
+
+@24
+folder is {-}
+@enduml
 ```
 
 ### 逐次処理との比較

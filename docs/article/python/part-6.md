@@ -30,12 +30,36 @@ process(data)
 
 ### スレッド・パー・コネクション
 
-```
-Client 1 ──→ Thread 1 ──→ 処理
-Client 2 ──→ Thread 2 ──→ 処理
-Client 3 ──→ Thread 3 ──→ 処理
-       ...
-Client N ──→ Thread N ──→ 処理
+```plantuml
+@startuml
+!theme plain
+left to right direction
+
+rectangle "クライアント" {
+  actor "Client 1" as c1
+  actor "Client 2" as c2
+  actor "Client 3" as c3
+  actor "Client N" as cn
+}
+
+rectangle "スレッド" {
+  rectangle "Thread 1" as t1
+  rectangle "Thread 2" as t2
+  rectangle "Thread 3" as t3
+  rectangle "Thread N" as tn
+}
+
+rectangle "処理" as proc
+
+c1 --> t1
+c2 --> t2
+c3 --> t3
+cn --> tn
+t1 --> proc
+t2 --> proc
+t3 --> proc
+tn --> proc
+@enduml
 ```
 
 **問題点:**

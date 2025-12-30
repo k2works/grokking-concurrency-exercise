@@ -154,10 +154,24 @@ if __name__ == "__main__":
 
 #### プロセスの状態遷移
 
-```
-Created → Started → Running → Finished
-           ↓
-        is_alive() == True
+```plantuml
+@startuml
+!theme plain
+left to right direction
+
+state Created
+state Started
+state Running
+state Finished
+
+Created --> Started : start()
+Started --> Running : 実行開始
+Running --> Finished : 完了
+
+note bottom of Started : is_alive() == True
+note bottom of Running : is_alive() == True
+note bottom of Finished : is_alive() == False
+@enduml
 ```
 
 ---
