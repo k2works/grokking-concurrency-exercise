@@ -1,0 +1,1910 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="逐次処理と並行処理の違い、基本概念を学ぶ">
+      
+      
+        <meta name="author" content="Project Team">
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../part-2/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Part I - 並行処理の基礎 - Grokking Concurrency</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../docs/mkdocs/assets/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#part-i" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Grokking Concurrency" class="md-header__button md-logo" aria-label="Grokking Concurrency" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Grokking Concurrency
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Part I - 並行処理の基礎
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/k2works/grokking-concurrency-exercise" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    grokking-concurrency-exercise
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../python/" class="md-tabs__link">
+          
+  
+  
+  Python
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Java
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../csharp/" class="md-tabs__link">
+          
+  
+  
+  C#
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Grokking Concurrency" class="md-nav__button md-logo" aria-label="Grokking Concurrency" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Grokking Concurrency
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/k2works/grokking-concurrency-exercise" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    grokking-concurrency-exercise
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概要
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/part-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part I - 並行処理の基礎
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/part-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part II - プロセスとスレッド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/part-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part III - マルチタスキングとスケジューリング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/part-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part IV - タスク分解と並列パターン
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/part-5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part V - 同期と排他制御
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/part-6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VI - ノンブロッキング I/O
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/part-7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VII - 非同期プログラミング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/part-8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VIII - 分散並列処理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Java
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概要
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part I - 並行処理の基礎
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part I - 並行処理の基礎
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        第2章: 逐次処理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="第2章: 逐次処理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐次処理とは
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パスワードクラッキングの例
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="パスワードクラッキングの例">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装の全体像
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コードの解説
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コードの解説">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. パスワード組み合わせの生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ハッシュ関数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. パスワードチェック
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パフォーマンス測定
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tdd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TDD によるテスト
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        逐次処理の特徴
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="逐次処理の特徴">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        利点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        限界
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ並行処理が必要か
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実行方法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実行方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テストの実行
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        サンプルコードの実行
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        次のステップ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考コード
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part II - プロセスとスレッド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part III - マルチタスキングとスケジューリング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part IV - タスク分解と並列パターン
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part V - 同期と排他制御
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VI - ノンブロッキング I/O
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VII - 非同期プログラミング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../part-8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VIII - 分散並列処理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C#
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    C#
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概要
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/part-1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part I - 並行処理の基礎
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/part-2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part II - プロセスとスレッド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/part-3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part III - マルチタスキングとスケジューリング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/part-4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part IV - タスク分解と並列パターン
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/part-5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part V - 同期と排他制御
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/part-6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VI - ノンブロッキング I/O
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/part-7/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VII - 非同期プログラミング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../csharp/part-8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Part VIII - 分散並列処理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="part-i">Part I: 並行処理の基礎<a class="headerlink" href="#part-i" title="Permanent link">&para;</a></h1>
+<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>本章では、並行処理を学ぶ前提として逐次処理（Sequential Processing）の基本を理解します。パスワードクラッキングを例に、逐次処理の特徴と限界を確認します。</p>
+<hr />
+<h2 id="2">第2章: 逐次処理<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<h3 id="_2">逐次処理とは<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>逐次処理は、タスクを一つずつ順番に実行する最も基本的な処理方式です。</p>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjU0cHgiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHN0eWxlPSJ3aWR0aDo0NThweDtoZWlnaHQ6NTRweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA0NTggNTQiIHdpZHRoPSI0NThweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PGRlZnMvPjxnPjwhLS1lbnRpdHkgdDEtLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0idDEiIGRhdGEtc291cmNlLWxpbmU9IjQiIGRhdGEtdWlkPSJlbnQwMDAyIiBpZD0iZW50aXR5X3QxIj48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI3MC45MDciIHg9IjEyIiB5PSIxMiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjUwLjkwNyIgeD0iMjIiIHk9IjM0Ljk5NTEiPiYjMTI0Nzk7JiMxMjQ3MzsmIzEyNDYzOzE8L3RleHQ+PC9nPjwhLS1lbnRpdHkgdDItLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0idDIiIGRhdGEtc291cmNlLWxpbmU9IjUiIGRhdGEtdWlkPSJlbnQwMDAzIiBpZD0iZW50aXR5X3QyIj48cmVjdCBmaWxsPSIjRkZGRkZGIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI3MC45MDciIHg9IjE0Mi45MSIgeT0iMTIiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSI1MC45MDciIHg9IjE1Mi45MSIgeT0iMzQuOTk1MSI+JiMxMjQ3OTsmIzEyNDczOyYjMTI0NjM7MjwvdGV4dD48L2c+PCEtLWVudGl0eSB0My0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJ0MyIgZGF0YS1zb3VyY2UtbGluZT0iNiIgZGF0YS11aWQ9ImVudDAwMDQiIGlkPSJlbnRpdHlfdDMiPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjcwLjkwNyIgeD0iMjczLjgxIiB5PSIxMiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjUwLjkwNyIgeD0iMjgzLjgxIiB5PSIzNC45OTUxIj4mIzEyNDc5OyYjMTI0NzM7JiMxMjQ2MzszPC90ZXh0PjwvZz48IS0tZW50aXR5IGRvbmUtLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iZG9uZSIgZGF0YS1zb3VyY2UtbGluZT0iNyIgZGF0YS11aWQ9ImVudDAwMDUiIGlkPSJlbnRpdHlfZG9uZSI+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNDcuOTk5OSIgeD0iNDA0LjcyIiB5PSIxMiIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI3Ljk5OTkiIHg9IjQxNC43MiIgeT0iMzQuOTk1MSI+JiMyMzQzNjsmIzIwMTAyOzwvdGV4dD48L2c+PCEtLWxpbmsgdDEgdG8gdDItLT48ZyBjbGFzcz0ibGluayIgZGF0YS1lbnRpdHktMT0idDEiIGRhdGEtZW50aXR5LTI9InQyIiBkYXRhLXNvdXJjZS1saW5lPSI5IiBkYXRhLXVpZD0ibG5rNiIgaWQ9ImxpbmtfdDFfdDIiPjxwYXRoIGQ9Ik04My4zNCwzMC4xNSBDMTAxLjY4LDMwLjE1IDExOC4xLDMwLjE1IDEzNi40NSwzMC4xNSIgZmlsbD0ibm9uZSIgaWQ9InQxLXRvLXQyIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBvbHlnb24gZmlsbD0iIzAwMDAwMCIgcG9pbnRzPSIxNDIuNDUsMzAuMTUsMTMzLjQ1LDI2LjE1LDEzNy40NSwzMC4xNSwxMzMuNDUsMzQuMTUsMTQyLjQ1LDMwLjE1IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PC9nPjwhLS1saW5rIHQyIHRvIHQzLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9InQyIiBkYXRhLWVudGl0eS0yPSJ0MyIgZGF0YS1zb3VyY2UtbGluZT0iMTAiIGRhdGEtdWlkPSJsbms3IiBpZD0ibGlua190Ml90MyI+PHBhdGggZD0iTTIxNC4yNCwzMC4xNSBDMjMyLjU5LDMwLjE1IDI0OS4wMSwzMC4xNSAyNjcuMzYsMzAuMTUiIGZpbGw9Im5vbmUiIGlkPSJ0Mi10by10MyIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iMjczLjM2LDMwLjE1LDI2NC4zNiwyNi4xNSwyNjguMzYsMzAuMTUsMjY0LjM2LDM0LjE1LDI3My4zNiwzMC4xNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjwvZz48IS0tbGluayB0MyB0byBkb25lLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9InQzIiBkYXRhLWVudGl0eS0yPSJkb25lIiBkYXRhLXNvdXJjZS1saW5lPSIxMSIgZGF0YS11aWQ9ImxuazgiIGlkPSJsaW5rX3QzX2RvbmUiPjxwYXRoIGQ9Ik0zNDUuMTksMzAuMTUgQzM2NC4yNiwzMC4xNSAzODEuMzYsMzAuMTUgMzk4LjI2LDMwLjE1IiBmaWxsPSJub25lIiBpZD0idDMtdG8tZG9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxwb2x5Z29uIGZpbGw9IiMwMDAwMDAiIHBvaW50cz0iNDA0LjI2LDMwLjE1LDM5NS4yNiwyNi4xNSwzOTkuMjYsMzAuMTUsMzk1LjI2LDM0LjE1LDQwNC4yNiwzMC4xNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjwvZz48IS0tU1JDPVtLb3A5SUNyRExJWjhJU3BDdXlmOUpJakhBQ2JOQUNmQ3BvWEhJQ2FpSWFxa29TcEZ1LTgyQ0hCcHFkREk1UEdVRC1yX3RCSnBTVER3R29NNW42QTU0YUVpYWFPR0lJRWlhaU9HSU1EYW9RVmhVZnhpUVdEQmZFSmRmTjluYkhXZ3dFaFFXT21lQ09BbVpCYkFaQzRpYTA4MF0tLT48L2c+PC9zdmc+" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="_3">パスワードクラッキングの例<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>ブルートフォース（総当たり）でパスワードを解読するプログラムを通じて、逐次処理の特徴を学びます。</p>
+<h4 id="_4">実装の全体像<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<p><strong>ソースファイル</strong>: <code>apps/java/src/main/java/concurrency/ch02/PasswordCracker.java</code></p>
+<div class="highlight"><pre><span></span><code><span class="kn">package</span><span class="w"> </span><span class="nn">concurrency.ch02</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.nio.charset.StandardCharsets</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.security.MessageDigest</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.security.NoSuchAlgorithmException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.ArrayList</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.HexFormat</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.util.List</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * パスワードクラッカー（逐次処理版）</span>
+<span class="cm"> * ブルートフォース（総当たり）でパスワードを解読する</span>
+<span class="cm"> */</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">PasswordCracker</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getCombinations</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">minNumber</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxNumber</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">combinations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;%0&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minNumber</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">maxNumber</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">combinations</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">));</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">combinations</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getCryptoHash</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">MessageDigest</span><span class="w"> </span><span class="n">digest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MessageDigest</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;SHA-256&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">digest</span><span class="p">.</span><span class="na">digest</span><span class="p">(</span><span class="n">password</span><span class="p">.</span><span class="na">getBytes</span><span class="p">(</span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">));</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">HexFormat</span><span class="p">.</span><span class="na">of</span><span class="p">().</span><span class="na">formatHex</span><span class="p">(</span><span class="n">hash</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">NoSuchAlgorithmException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RuntimeException</span><span class="p">(</span><span class="s">&quot;SHA-256 algorithm not available&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">checkPassword</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">expectedCryptoHash</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">possiblePassword</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">actualCryptoHash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getCryptoHash</span><span class="p">(</span><span class="n">possiblePassword</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">expectedCryptoHash</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">actualCryptoHash</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">crackPassword</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">cryptoHash</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">maxNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="n">Math</span><span class="p">.</span><span class="na">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">combinations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getCombinations</span><span class="p">(</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">maxNumber</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">combination</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">combinations</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">checkPassword</span><span class="p">(</span><span class="n">cryptoHash</span><span class="p">,</span><span class="w"> </span><span class="n">combination</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">combination</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">cryptoHash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Processing number combinations sequentially&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">startTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crackPassword</span><span class="p">(</span><span class="n">cryptoHash</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">);</span>
+
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">processTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">startTime</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;PASSWORD CRACKED: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&quot;PROCESS TIME: %.3f seconds%n&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">processTime</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1_000_000_000.0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="_5">コードの解説<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="1">1. パスワード組み合わせの生成<a class="headerlink" href="#1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">getCombinations</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">minNumber</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">maxNumber</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">combinations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ArrayList</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;%0&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="p">;</span><span class="w">  </span><span class="c1">// 先頭ゼロ埋めフォーマット</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minNumber</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">maxNumber</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">combinations</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">combinations</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>8桁の数字パスワードの場合、<code>00000000</code> から <code>99999999</code> まで 1億通りの組み合わせを生成します。</p>
+<h4 id="2_1">2. ハッシュ関数<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="nf">getCryptoHash</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">MessageDigest</span><span class="w"> </span><span class="n">digest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MessageDigest</span><span class="p">.</span><span class="na">getInstance</span><span class="p">(</span><span class="s">&quot;SHA-256&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">byte</span><span class="o">[]</span><span class="w"> </span><span class="n">hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">digest</span><span class="p">.</span><span class="na">digest</span><span class="p">(</span><span class="n">password</span><span class="p">.</span><span class="na">getBytes</span><span class="p">(</span><span class="n">StandardCharsets</span><span class="p">.</span><span class="na">UTF_8</span><span class="p">));</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">HexFormat</span><span class="p">.</span><span class="na">of</span><span class="p">().</span><span class="na">formatHex</span><span class="p">(</span><span class="n">hash</span><span class="p">);</span><span class="w">  </span><span class="c1">// Java 17+ の HexFormat</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>SHA-256 を使用してパスワードをハッシュ化します。<code>HexFormat</code> は Java 17 以降で利用可能な便利なクラスです。</p>
+<h4 id="3">3. パスワードチェック<a class="headerlink" href="#3" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="nf">checkPassword</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">expectedCryptoHash</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">possiblePassword</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">actualCryptoHash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getCryptoHash</span><span class="p">(</span><span class="n">possiblePassword</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">expectedCryptoHash</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="n">actualCryptoHash</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>候補パスワードのハッシュと、保存されているハッシュを比較します。</p>
+<h3 id="_6">パフォーマンス測定<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kt">long</span><span class="w"> </span><span class="n">startTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+<span class="c1">// ... 処理 ...</span>
+<span class="kt">long</span><span class="w"> </span><span class="n">processTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">startTime</span><span class="p">;</span>
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">printf</span><span class="p">(</span><span class="s">&quot;PROCESS TIME: %.3f seconds%n&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">processTime</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1_000_000_000.0</span><span class="p">);</span>
+</code></pre></div>
+<p><code>System.nanoTime()</code> は高精度のパフォーマンスカウンターで、経過時間の測定に適しています。</p>
+<hr />
+<h2 id="tdd">TDD によるテスト<a class="headerlink" href="#tdd" title="Permanent link">&para;</a></h2>
+<p><strong>ソースファイル</strong>: <code>apps/java/src/test/java/concurrency/ch02/PasswordCrackerTest.java</code></p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Test</span>
+<span class="nd">@DisplayName</span><span class="p">(</span><span class="s">&quot;4桁の組み合わせを生成できる&quot;</span><span class="p">)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">shouldGenerateFourDigitCombinations</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">combinations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PasswordCracker</span><span class="p">.</span><span class="na">getCombinations</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">assertThat</span><span class="p">(</span><span class="n">combinations</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">hasSize</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">containsExactly</span><span class="p">(</span>
+<span class="w">            </span><span class="s">&quot;0000&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0001&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0002&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0003&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0004&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s">&quot;0005&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0006&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0007&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0008&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0009&quot;</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nd">@Test</span>
+<span class="nd">@DisplayName</span><span class="p">(</span><span class="s">&quot;SHA-256ハッシュを計算できる&quot;</span><span class="p">)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">shouldCalculateSha256Hash</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PasswordCracker</span><span class="p">.</span><span class="na">getCryptoHash</span><span class="p">(</span><span class="s">&quot;12345678&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">assertThat</span><span class="p">(</span><span class="n">hash</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="na">isEqualTo</span><span class="p">(</span><span class="s">&quot;ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nd">@Test</span>
+<span class="nd">@DisplayName</span><span class="p">(</span><span class="s">&quot;パスワードをクラックできる&quot;</span><span class="p">)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">shouldCrackPassword</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">cryptoHash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PasswordCracker</span><span class="p">.</span><span class="na">getCryptoHash</span><span class="p">(</span><span class="s">&quot;1234&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PasswordCracker</span><span class="p">.</span><span class="na">crackPassword</span><span class="p">(</span><span class="n">cryptoHash</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">assertThat</span><span class="p">(</span><span class="n">result</span><span class="p">).</span><span class="na">isEqualTo</span><span class="p">(</span><span class="s">&quot;1234&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="_7">逐次処理の特徴<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="_8">利点<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>利点</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>シンプル</td>
+<td>実装が簡単で理解しやすい</td>
+</tr>
+<tr>
+<td>予測可能</td>
+<td>実行順序が決定的</td>
+</tr>
+<tr>
+<td>デバッグ容易</td>
+<td>問題の特定が容易</td>
+</tr>
+<tr>
+<td>競合なし</td>
+<td>共有リソースの競合が発生しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">限界<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>限界</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>遅い</td>
+<td>1億通りを1つずつ処理するため時間がかかる</td>
+</tr>
+<tr>
+<td>リソース非効率</td>
+<td>マルチコア CPU を活用できない</td>
+</tr>
+<tr>
+<td>スケールしない</td>
+<td>データ量に比例して処理時間が増加</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_10">なぜ並行処理が必要か<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>8桁のパスワードクラッキングでは、1億通りの組み合わせを順番にチェックします。</p>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjIxOHB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6Nzk5cHg7aGVpZ2h0OjIxOHB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDc5OSAyMTgiIHdpZHRoPSI3OTlweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PHRpdGxlPiYjMzY4ODA7JiMyNzQyNTsmIzIwOTY2OyYjMjk3MDI7OiBDUFUmIzIwMzUxOyYjMjk5OTI7JiMyOTU3NTsgMjUlPC90aXRsZT48ZGVmcy8+PGc+PGcgY2xhc3M9InRpdGxlIiBkYXRhLXNvdXJjZS1saW5lPSIyIj48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIyMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMjgwLjkwODgiIHg9IjI1NC43OTU3IiB5PSIzNS40MjA5Ij4mIzM2ODgwOyYjMjc0MjU7JiMyMDk2NjsmIzI5NzAyOzogQ1BVJiMyMDM1MTsmIzI5OTkyOyYjMjk1NzU7IDI1JTwvdGV4dD48L2c+PCEtLWNsdXN0ZXIgQ1BVLS0+PGcgY2xhc3M9ImNsdXN0ZXIiIGRhdGEtZW50aXR5PSJDUFUiIGRhdGEtc291cmNlLWxpbmU9IjQiIGRhdGEtdWlkPSJlbnQwMDAyIiBpZD0iY2x1c3Rlcl9DUFUiPjxyZWN0IGZpbGw9IiNGRkZGRkYiIGhlaWdodD0iODcuMyIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjM2NCIgeD0iMTIiIHk9IjEyNS4zMjk0Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjMxLjkwMzMiIHg9IjE3OC4wNDgzIiB5PSIxNDAuMzI0NSI+Q1BVPC90ZXh0PjwvZz48IS0tZW50aXR5IGMxLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9ImMxIiBkYXRhLXNvdXJjZS1saW5lPSI1IiBkYXRhLXVpZD0iZW50MDAwMyIgaWQ9ImVudGl0eV9jMSI+PHJlY3QgZmlsbD0iIzkwRUU5MCIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNTYuOTA3MSIgeD0iMjcuNTUiIHk9IjE2MC4zMjk0Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMzYuOTA3MSIgeD0iMzcuNTUiIHk9IjE4My4zMjQ1Ij4mIzEyNDY3OyYjMTI0NTA7MTwvdGV4dD48L2c+PCEtLWVudGl0eSBjMi0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJjMiIgZGF0YS1zb3VyY2UtbGluZT0iNiIgZGF0YS11aWQ9ImVudDAwMDQiIGlkPSJlbnRpdHlfYzIiPjxyZWN0IGZpbGw9IiNEM0QzRDMiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjU2LjkwNzEiIHg9IjExOS41NSIgeT0iMTYwLjMyOTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzNi45MDcxIiB4PSIxMjkuNTUiIHk9IjE4My4zMjQ1Ij4mIzEyNDY3OyYjMTI0NTA7MjwvdGV4dD48L2c+PCEtLWVudGl0eSBjMy0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJjMyIgZGF0YS1zb3VyY2UtbGluZT0iNyIgZGF0YS11aWQ9ImVudDAwMDUiIGlkPSJlbnRpdHlfYzMiPjxyZWN0IGZpbGw9IiNEM0QzRDMiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjU2LjkwNzEiIHg9IjIxMS41NSIgeT0iMTYwLjMyOTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzNi45MDcxIiB4PSIyMjEuNTUiIHk9IjE4My4zMjQ1Ij4mIzEyNDY3OyYjMTI0NTA7MzwvdGV4dD48L2c+PCEtLWVudGl0eSBjNC0tPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJjNCIgZGF0YS1zb3VyY2UtbGluZT0iOCIgZGF0YS11aWQ9ImVudDAwMDYiIGlkPSJlbnRpdHlfYzQiPjxyZWN0IGZpbGw9IiNEM0QzRDMiIGhlaWdodD0iMzYuMjk2OSIgcng9IjIuNSIgcnk9IjIuNSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIgd2lkdGg9IjU2LjkwNzEiIHg9IjMwMy41NSIgeT0iMTYwLjMyOTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzNi45MDcxIiB4PSIzMTMuNTUiIHk9IjE4My4zMjQ1Ij4mIzEyNDY3OyYjMTI0NTA7NDwvdGV4dD48L2c+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IkdNTjciIGRhdGEtc291cmNlLWxpbmU9IjExIiBkYXRhLXVpZD0iZW50MDAwOCIgaWQ9ImVudGl0eV9HTU43Ij48cGF0aCBkPSJNMzk1LjgsMTY1LjkxOTQgTDM5NS44LDE5MS4wNTIyIEw0NjguMTk3LDE5MS4wNTIyIEw0NjguMTk3LDE3NS45MTk0IEw0NTguMTk3LDE2NS45MTk0IEwzOTUuOCwxNjUuOTE5NCIgZmlsbD0iI0ZGRkZGRiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxwYXRoIGQ9Ik00NTguMTk3LDE2NS45MTk0IEw0NTguMTk3LDE3NS45MTk0IEw0NjguMTk3LDE3NS45MTk0IEw0NTguMTk3LDE2NS45MTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTEuMzk3IiB4PSI0MDEuOCIgeT0iMTgyLjk4NjMiPiYjMjA5NjY7JiMyOTcwMjsmIzIwMDEzOy4uLjwvdGV4dD48L2c+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IkdNTjEwIiBkYXRhLXNvdXJjZS1saW5lPSIxMiIgZGF0YS11aWQ9ImVudDAwMTEiIGlkPSJlbnRpdHlfR01OMTAiPjxwYXRoIGQ9Ik01MDMuNSwxNjUuOTE5NCBMNTAzLjUsMTkxLjA1MjIgTDU3Ni41MDAxLDE5MS4wNTIyIEw1NzYuNTAwMSwxNzUuOTE5NCBMNTY2LjUwMDEsMTY1LjkxOTQgTDUwMy41LDE2NS45MTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBhdGggZD0iTTU2Ni41MDAxLDE2NS45MTk0IEw1NjYuNTAwMSwxNzUuOTE5NCBMNTc2LjUwMDEsMTc1LjkxOTQgTDU2Ni41MDAxLDE2NS45MTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTIuMDAwMSIgeD0iNTA5LjUiIHk9IjE4Mi45ODYzIj4mIzEyNDUwOyYjMTI0NTI7JiMxMjQ4OTsmIzEyNTIzOzwvdGV4dD48L2c+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IkdNTjEzIiBkYXRhLXNvdXJjZS1saW5lPSIxMyIgZGF0YS11aWQ9ImVudDAwMTQiIGlkPSJlbnRpdHlfR01OMTMiPjxwYXRoIGQ9Ik02MTEuNSwxNjUuOTE5NCBMNjExLjUsMTkxLjA1MjIgTDY4NC41MDAxLDE5MS4wNTIyIEw2ODQuNTAwMSwxNzUuOTE5NCBMNjc0LjUwMDEsMTY1LjkxOTQgTDYxMS41LDE2NS45MTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBhdGggZD0iTTY3NC41MDAxLDE2NS45MTk0IEw2NzQuNTAwMSwxNzUuOTE5NCBMNjg0LjUwMDEsMTc1LjkxOTQgTDY3NC41MDAxLDE2NS45MTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTIuMDAwMSIgeD0iNjE3LjUiIHk9IjE4Mi45ODYzIj4mIzEyNDUwOyYjMTI0NTI7JiMxMjQ4OTsmIzEyNTIzOzwvdGV4dD48L2c+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IkdNTjE2IiBkYXRhLXNvdXJjZS1saW5lPSIxNCIgZGF0YS11aWQ9ImVudDAwMTciIGlkPSJlbnRpdHlfR01OMTYiPjxwYXRoIGQ9Ik03MTkuNSwxNjUuOTE5NCBMNzE5LjUsMTkxLjA1MjIgTDc5Mi41MDAxLDE5MS4wNTIyIEw3OTIuNTAwMSwxNzUuOTE5NCBMNzgyLjUwMDEsMTY1LjkxOTQgTDcxOS41LDE2NS45MTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBhdGggZD0iTTc4Mi41MDAxLDE2NS45MTk0IEw3ODIuNTAwMSwxNzUuOTE5NCBMNzkyLjUwMDEsMTc1LjkxOTQgTDc4Mi41MDAxLDE2NS45MTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iNTIuMDAwMSIgeD0iNzI1LjUiIHk9IjE4Mi45ODYzIj4mIzEyNDUwOyYjMTI0NTI7JiMxMjQ4OTsmIzEyNTIzOzwvdGV4dD48L2c+PCEtLWxpbmsgYzEgdG8gR01ONy0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJjMSIgZGF0YS1lbnRpdHktMj0iR01ONyIgZGF0YS1zb3VyY2UtbGluZT0iMTEiIGRhdGEtdWlkPSJsbms5IiBpZD0ibGlua19jMV9HTU43Ij48cGF0aCBkPSJNNjIuNjgsMTYwLjA1OTQgQzcxLjc1LDEzOC4xMzk0IDkwLjI3LDEwMi41OTk0IDExOS41LDg3LjMyOTQgQzE2Ni41OCw2Mi43NDk0IDMxMC41OSw2NC40MTk0IDM1OC41LDg3LjMyOTQgQzM5Mi42MSwxMDMuNjQ5NCA0MTUuOTUsMTQ0LjM2OTQgNDI2LjE3LDE2NS40MTk0IiBmaWxsPSJub25lIiBpZD0iYzEtR01ONyIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxO3N0cm9rZS1kYXNoYXJyYXk6Nyw3OyIvPjwvZz48IS0tbGluayBjMiB0byBHTU4xMC0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJjMiIgZGF0YS1lbnRpdHktMj0iR01OMTAiIGRhdGEtc291cmNlLWxpbmU9IjEyIiBkYXRhLXVpZD0ibG5rMTIiIGlkPSJsaW5rX2MyX0dNTjEwIj48cGF0aCBkPSJNMTU0LjY4LDE2MC4wNTk0IEMxNjMuNzUsMTM4LjEzOTQgMTgyLjI3LDEwMi41OTk0IDIxMS41LDg3LjMyOTQgQzI2Mi4xMyw2MC44OTk0IDQxNy4xNCw2Mi4zNDk0IDQ2OC41LDg3LjMyOTQgQzUwMi4xNCwxMDMuNjk5NCA1MjQuNjQsMTQ0LjM5OTQgNTM0LjQzLDE2NS40Mjk0IiBmaWxsPSJub25lIiBpZD0iYzItR01OMTAiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTtzdHJva2UtZGFzaGFycmF5OjcsNzsiLz48L2c+PCEtLWxpbmsgYzMgdG8gR01OMTMtLT48ZyBjbGFzcz0ibGluayIgZGF0YS1lbnRpdHktMT0iYzMiIGRhdGEtZW50aXR5LTI9IkdNTjEzIiBkYXRhLXNvdXJjZS1saW5lPSIxMyIgZGF0YS11aWQ9ImxuazE1IiBpZD0ibGlua19jM19HTU4xMyI+PHBhdGggZD0iTTI0Ni42OCwxNjAuMDU5NCBDMjU1Ljc1LDEzOC4xMzk0IDI3NC4yNywxMDIuNTk5NCAzMDMuNSw4Ny4zMjk0IEMzNTcuMjgsNTkuMjU5NCA1MjEuOTUsNjAuNzg5NCA1NzYuNSw4Ny4zMjk0IEM2MTAuMTQsMTAzLjY5OTQgNjMyLjY0LDE0NC4zOTk0IDY0Mi40MywxNjUuNDI5NCIgZmlsbD0ibm9uZSIgaWQ9ImMzLUdNTjEzIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7c3Ryb2tlLWRhc2hhcnJheTo3LDc7Ii8+PC9nPjwhLS1saW5rIGM0IHRvIEdNTjE2LS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9ImM0IiBkYXRhLWVudGl0eS0yPSJHTU4xNiIgZGF0YS1zb3VyY2UtbGluZT0iMTQiIGRhdGEtdWlkPSJsbmsxOCIgaWQ9ImxpbmtfYzRfR01OMTYiPjxwYXRoIGQ9Ik0zMzguNjgsMTYwLjA1OTQgQzM0Ny43NSwxMzguMTM5NCAzNjYuMjcsMTAyLjU5OTQgMzk1LjUsODcuMzI5NCBDNDUyLjQzLDU3LjYwOTQgNjI2Ljc1LDU5LjIzOTQgNjg0LjUsODcuMzI5NCBDNzE4LjE0LDEwMy42OTk0IDc0MC42NCwxNDQuMzk5NCA3NTAuNDMsMTY1LjQyOTQiIGZpbGw9Im5vbmUiIGlkPSJjNC1HTU4xNiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxO3N0cm9rZS1kYXNoYXJyYXk6Nyw3OyIvPjwvZz48IS0tU1JDPVtLb3A5SUNyRExJWjhJU3BDdW9oOUJDYjlMTlpQQ0U3UGNlTEZzdlN6ZHoxY2ZVMFM0RmZheF94ZEtyT3l4c2pOQzM5THZVOGdJYXFrSVNuQjF3ZkswYWVnQUxHWllwbmtzbG91UVA2WGFhOVlpS0FvZU9Bb0pzUHdIZWJ4S01mZzdnT2c4dVdnOHhZZ240ZkNIU09HSFNQdTVQYjA1OWFXQXdoYnVpaEJCcWJMQTBBOUFFSWRXUG5aZkczbnJmQ1RRX05xekQzYlpPM29HQ0NVRG9ydnREcHZrN2Fya2htbjBOYUpEN2EwXS0tPjwvZz48L3N2Zz4=" class="uml" alt="uml diagram" title="" /></p>
+<p>4コア CPU があっても、逐次処理では1コアしか使用されません。並行処理を使えば、複数コアに作業を分散できます。</p>
+<p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgZGF0YS1kaWFncmFtLXR5cGU9IkRFU0NSSVBUSU9OIiBoZWlnaHQ9IjIzNHB4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzdHlsZT0id2lkdGg6MTEzOXB4O2hlaWdodDoyMzRweDtiYWNrZ3JvdW5kOiNGRkZGRkY7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMTM5IDIzNCIgd2lkdGg9IjExMzlweCIgem9vbUFuZFBhbj0ibWFnbmlmeSI+PHRpdGxlPiYjMjAwMDY7JiMzNDg5MjsmIzIwOTY2OyYjMjk3MDI7OiBDUFUmIzIwMzUxOyYjMjk5OTI7JiMyOTU3NTsgMTAwJTwvdGl0bGU+PGRlZnMvPjxnPjxnIGNsYXNzPSJ0aXRsZSIgZGF0YS1zb3VyY2UtbGluZT0iMiI+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMjIiIGZvbnQtd2VpZ2h0PSJib2xkIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI5Ni4yMTY0IiB4PSI0MTYuOTAwMiIgeT0iMzUuNDIwOSI+JiMyMDAwNjsmIzM0ODkyOyYjMjA5NjY7JiMyOTcwMjs6IENQVSYjMjAzNTE7JiMyOTk5MjsmIzI5NTc1OyAxMDAlPC90ZXh0PjwvZz48IS0tY2x1c3RlciBDUFUtLT48ZyBjbGFzcz0iY2x1c3RlciIgZGF0YS1lbnRpdHk9IkNQVSIgZGF0YS1zb3VyY2UtbGluZT0iNCIgZGF0YS11aWQ9ImVudDAwMDIiIGlkPSJjbHVzdGVyX0NQVSI+PHJlY3QgZmlsbD0iI0ZGRkZGRiIgaGVpZ2h0PSI4Ny4zIiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iMzY0IiB4PSIxMiIgeT0iMTQxLjE2OTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMzEuOTAzMyIgeD0iMTc4LjA0ODMiIHk9IjE1Ni4xNjQ1Ij5DUFU8L3RleHQ+PC9nPjwhLS1lbnRpdHkgYzEtLT48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iYzEiIGRhdGEtc291cmNlLWxpbmU9IjUiIGRhdGEtdWlkPSJlbnQwMDAzIiBpZD0iZW50aXR5X2MxIj48cmVjdCBmaWxsPSIjOTBFRTkwIiBoZWlnaHQ9IjM2LjI5NjkiIHJ4PSIyLjUiIHJ5PSIyLjUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiIHdpZHRoPSI1Ni45MDcxIiB4PSIyNy41NSIgeT0iMTc2LjE2OTQiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxNCIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIzNi45MDcxIiB4PSIzNy41NSIgeT0iMTk5LjE2NDUiPiYjMTI0Njc7JiMxMjQ1MDsxPC90ZXh0PjwvZz48IS0tZW50aXR5IGMyLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9ImMyIiBkYXRhLXNvdXJjZS1saW5lPSI2IiBkYXRhLXVpZD0iZW50MDAwNCIgaWQ9ImVudGl0eV9jMiI+PHJlY3QgZmlsbD0iIzkwRUU5MCIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNTYuOTA3MSIgeD0iMTE5LjU1IiB5PSIxNzYuMTY5NCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjM2LjkwNzEiIHg9IjEyOS41NSIgeT0iMTk5LjE2NDUiPiYjMTI0Njc7JiMxMjQ1MDsyPC90ZXh0PjwvZz48IS0tZW50aXR5IGMzLS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9ImMzIiBkYXRhLXNvdXJjZS1saW5lPSI3IiBkYXRhLXVpZD0iZW50MDAwNSIgaWQ9ImVudGl0eV9jMyI+PHJlY3QgZmlsbD0iIzkwRUU5MCIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNTYuOTA3MSIgeD0iMjExLjU1IiB5PSIxNzYuMTY5NCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjM2LjkwNzEiIHg9IjIyMS41NSIgeT0iMTk5LjE2NDUiPiYjMTI0Njc7JiMxMjQ1MDszPC90ZXh0PjwvZz48IS0tZW50aXR5IGM0LS0+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9ImM0IiBkYXRhLXNvdXJjZS1saW5lPSI4IiBkYXRhLXVpZD0iZW50MDAwNiIgaWQ9ImVudGl0eV9jNCI+PHJlY3QgZmlsbD0iIzkwRUU5MCIgaGVpZ2h0PSIzNi4yOTY5IiByeD0iMi41IiByeT0iMi41IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7IiB3aWR0aD0iNTYuOTA3MSIgeD0iMzAzLjU1IiB5PSIxNzYuMTY5NCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjM2LjkwNzEiIHg9IjMxMy41NSIgeT0iMTk5LjE2NDUiPiYjMTI0Njc7JiMxMjQ1MDs0PC90ZXh0PjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iR01ONyIgZGF0YS1zb3VyY2UtbGluZT0iMTEiIGRhdGEtdWlkPSJlbnQwMDA4IiBpZD0iZW50aXR5X0dNTjciPjxwYXRoIGQ9Ik0zOTQuOTksMTgxLjc1OTQgTDM5NC45OSwyMDYuODkyMiBMNTUzLjAxNjksMjA2Ljg5MjIgTDU1My4wMTY5LDE5MS43NTk0IEw1NDMuMDE2OSwxODEuNzU5NCBMMzk0Ljk5LDE4MS43NTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBhdGggZD0iTTU0My4wMTY5LDE4MS43NTk0IEw1NDMuMDE2OSwxOTEuNzU5NCBMNTUzLjAxNjksMTkxLjc1OTQgTDU0My4wMTY5LDE4MS43NTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IlZlcmRhbmEiIGZvbnQtc2l6ZT0iMTMiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTM3LjAyNjkiIHg9IjQwMC45OSIgeT0iMTk4LjgyNjMiPjAwMDAwMDAwLTI0OTk5OTk5PC90ZXh0PjwvZz48ZyBjbGFzcz0iZW50aXR5IiBkYXRhLWVudGl0eT0iR01OMTAiIGRhdGEtc291cmNlLWxpbmU9IjEyIiBkYXRhLXVpZD0iZW50MDAxMSIgaWQ9ImVudGl0eV9HTU4xMCI+PHBhdGggZD0iTTU4Ny45OSwxODEuNzU5NCBMNTg3Ljk5LDIwNi44OTIyIEw3NDYuMDE2OSwyMDYuODkyMiBMNzQ2LjAxNjksMTkxLjc1OTQgTDczNi4wMTY5LDE4MS43NTk0IEw1ODcuOTksMTgxLjc1OTQiIGZpbGw9IiNGRkZGRkYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48cGF0aCBkPSJNNzM2LjAxNjksMTgxLjc1OTQgTDczNi4wMTY5LDE5MS43NTk0IEw3NDYuMDE2OSwxOTEuNzU5NCBMNzM2LjAxNjksMTgxLjc1OTQiIGZpbGw9IiNGRkZGRkYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTsiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0iVmVyZGFuYSIgZm9udC1zaXplPSIxMyIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzcuMDI2OSIgeD0iNTkzLjk5IiB5PSIxOTguODI2MyI+MjUwMDAwMDAtNDk5OTk5OTk8L3RleHQ+PC9nPjxnIGNsYXNzPSJlbnRpdHkiIGRhdGEtZW50aXR5PSJHTU4xMyIgZGF0YS1zb3VyY2UtbGluZT0iMTMiIGRhdGEtdWlkPSJlbnQwMDE0IiBpZD0iZW50aXR5X0dNTjEzIj48cGF0aCBkPSJNNzgwLjk5LDE4MS43NTk0IEw3ODAuOTksMjA2Ljg5MjIgTDkzOS4wMTY5LDIwNi44OTIyIEw5MzkuMDE2OSwxOTEuNzU5NCBMOTI5LjAxNjksMTgxLjc1OTQgTDc4MC45OSwxODEuNzU5NCIgZmlsbD0iI0ZGRkZGRiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjxwYXRoIGQ9Ik05MjkuMDE2OSwxODEuNzU5NCBMOTI5LjAxNjksMTkxLjc1OTQgTDkzOS4wMTY5LDE5MS43NTk0IEw5MjkuMDE2OSwxODEuNzU5NCIgZmlsbD0iI0ZGRkZGRiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEzNy4wMjY5IiB4PSI3ODYuOTkiIHk9IjE5OC44MjYzIj41MDAwMDAwMC03NDk5OTk5OTwvdGV4dD48L2c+PGcgY2xhc3M9ImVudGl0eSIgZGF0YS1lbnRpdHk9IkdNTjE2IiBkYXRhLXNvdXJjZS1saW5lPSIxNCIgZGF0YS11aWQ9ImVudDAwMTciIGlkPSJlbnRpdHlfR01OMTYiPjxwYXRoIGQ9Ik05NzMuOTksMTgxLjc1OTQgTDk3My45OSwyMDYuODkyMiBMMTEzMi4wMTY5LDIwNi44OTIyIEwxMTMyLjAxNjksMTkxLjc1OTQgTDExMjIuMDE2OSwxODEuNzU5NCBMOTczLjk5LDE4MS43NTk0IiBmaWxsPSIjRkZGRkZGIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7Ii8+PHBhdGggZD0iTTExMjIuMDE2OSwxODEuNzU5NCBMMTEyMi4wMTY5LDE5MS43NTk0IEwxMTMyLjAxNjksMTkxLjc1OTQgTDExMjIuMDE2OSwxODEuNzU5NCIgZmlsbD0iI0ZGRkZGRiIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxOyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJWZXJkYW5hIiBmb250LXNpemU9IjEzIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEzNy4wMjY5IiB4PSI5NzkuOTkiIHk9IjE5OC44MjYzIj43NTAwMDAwMC05OTk5OTk5OTwvdGV4dD48L2c+PCEtLWxpbmsgYzEgdG8gR01ONy0tPjxnIGNsYXNzPSJsaW5rIiBkYXRhLWVudGl0eS0xPSJjMSIgZGF0YS1lbnRpdHktMj0iR01ONyIgZGF0YS1zb3VyY2UtbGluZT0iMTEiIGRhdGEtdWlkPSJsbms5IiBpZD0ibGlua19jMV9HTU43Ij48cGF0aCBkPSJNNjIuNjgsMTc1Ljg5OTQgQzcxLjc1LDE1My45Nzk0IDkwLjI3LDExOC40Mzk0IDExOS41LDEwMy4xNjk0IEMxNjYuNTgsNzguNTg5NCAzMDguMzIsODUuNzU5NCAzNTguNSwxMDMuMTY5NCBDNDAzLjYzLDExOC44Mjk0IDQ0NC40NiwxNjAuMjQ5NCA0NjMuMTksMTgxLjQzOTQiIGZpbGw9Im5vbmUiIGlkPSJjMS1HTU43IiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7c3Ryb2tlLWRhc2hhcnJheTo3LDc7Ii8+PC9nPjwhLS1saW5rIGMyIHRvIEdNTjEwLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9ImMyIiBkYXRhLWVudGl0eS0yPSJHTU4xMCIgZGF0YS1zb3VyY2UtbGluZT0iMTIiIGRhdGEtdWlkPSJsbmsxMiIgaWQ9ImxpbmtfYzJfR01OMTAiPjxwYXRoIGQ9Ik0xNTQuNjgsMTc1Ljg5OTQgQzE2My43NSwxNTMuOTc5NCAxODIuMjcsMTE4LjQzOTQgMjExLjUsMTAzLjE2OTQgQzI3OC44Nyw2Ny45OTk0IDQ4MS44MSw3Ny45NDk0IDU1My41LDEwMy4xNjk0IEM1OTguMDgsMTE4Ljg1OTQgNjM4LjA5LDE2MC4yNTk0IDY1Ni40MiwxODEuNDM5NCIgZmlsbD0ibm9uZSIgaWQ9ImMyLUdNTjEwIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7c3Ryb2tlLWRhc2hhcnJheTo3LDc7Ii8+PC9nPjwhLS1saW5rIGMzIHRvIEdNTjEzLS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9ImMzIiBkYXRhLWVudGl0eS0yPSJHTU4xMyIgZGF0YS1zb3VyY2UtbGluZT0iMTMiIGRhdGEtdWlkPSJsbmsxNSIgaWQ9ImxpbmtfYzNfR01OMTMiPjxwYXRoIGQ9Ik0yNDYuNjgsMTc1Ljg5OTQgQzI1NS43NSwxNTMuOTc5NCAyNzQuMjcsMTE4LjQzOTQgMzAzLjUsMTAzLjE2OTQgQzM5MC43Nyw1Ny42MDk0IDY1My42NCw3MC40OTk0IDc0Ni41LDEwMy4xNjk0IEM3OTEuMDgsMTE4Ljg1OTQgODMxLjA5LDE2MC4yNTk0IDg0OS40MiwxODEuNDM5NCIgZmlsbD0ibm9uZSIgaWQ9ImMzLUdNTjEzIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjE7c3Ryb2tlLWRhc2hhcnJheTo3LDc7Ii8+PC9nPjwhLS1saW5rIGM0IHRvIEdNTjE2LS0+PGcgY2xhc3M9ImxpbmsiIGRhdGEtZW50aXR5LTE9ImM0IiBkYXRhLWVudGl0eS0yPSJHTU4xNiIgZGF0YS1zb3VyY2UtbGluZT0iMTQiIGRhdGEtdWlkPSJsbmsxOCIgaWQ9ImxpbmtfYzRfR01OMTYiPjxwYXRoIGQ9Ik0zMzguNDksMTc1LjkwOTQgQzM0Ny4zNCwxNTMuOTk5NCAzNjUuNDcsMTE4LjQ2OTQgMzk0LjUsMTAzLjE2OTQgQzQ0OC4wOCw3NC45NDk0IDg4Mi4zOCw4My4wNzk0IDkzOS41LDEwMy4xNjk0IEM5ODQuMDgsMTE4Ljg1OTQgMTAyNC4wOSwxNjAuMjU5NCAxMDQyLjQyLDE4MS40Mzk0IiBmaWxsPSJub25lIiBpZD0iYzQtR01OMTYiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MTtzdHJva2UtZGFzaGFycmF5OjcsNzsiLz48L2c+PCEtLVNSQz1bS29wOUlDckRMSVo4SVNwQ3VvaDlCQ2I5TE5Zb096Y0JYSnJGc3ZTemR6MWNmVTBTNEZmYXhfeGRLck95eHNqTkMzR21LRU5ZQWFmREJhZENJbVNnTEdCQUFZYks4dWl5UmpoeWs2Y0hlUDkyT2g1MmlnNjJpYXpjVWFROVVyNWdRWHdjQVlFOEFZRnlnZW1YZ2VwbmdwQTFnMzkxS0xOQm5QTU5OdkFnSzBHSUtpWEYweGQ4SWk0MDJkSURKMnAxMDVzSDRMMkhhSWJLNExHRFhZOVplMjlKYzRkY0U0bW8wSWVvWHZhNERTV0kwMDAwXS0tPjwvZz48L3N2Zz4=" class="uml" alt="uml diagram" title="" /></p>
+<hr />
+<h2 id="_11">実行方法<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h3 id="_12">テストの実行<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>apps/java
+./gradlew<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<h3 id="_13">サンプルコードの実行<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>apps/java
+./gradlew<span class="w"> </span>run
+</code></pre></div>
+<hr />
+<h2 id="_14">次のステップ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<p>Part II では、スレッドとプロセスを使って並行処理を実装します。パスワードクラッキングを並列化し、処理時間を大幅に短縮する方法を学びます。</p>
+<hr />
+<h2 id="_15">参考コード<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../../apps/java/src/main/java/concurrency/ch02/PasswordCracker.java">apps/java/src/main/java/concurrency/ch02/PasswordCracker.java</a></li>
+<li><a href="../../../apps/java/src/test/java/concurrency/ch02/PasswordCrackerTest.java">apps/java/src/test/java/concurrency/ch02/PasswordCrackerTest.java</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/k2works" target="_blank" rel="noopener" title="GitHub Repository/grokking-concurrency-exercise" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+      
+        <script src="../../docs/assets/js/extra.js"></script>
+      
+    
+  </body>
+</html>
