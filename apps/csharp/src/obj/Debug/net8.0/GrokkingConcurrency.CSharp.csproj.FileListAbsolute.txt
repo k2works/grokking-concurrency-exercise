@@ -1,0 +1,12 @@
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\bin\Debug\net8.0\GrokkingConcurrency.CSharp.deps.json
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\bin\Debug\net8.0\GrokkingConcurrency.CSharp.dll
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\bin\Debug\net8.0\GrokkingConcurrency.CSharp.pdb
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\GrokkingConcurrency.CSharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\GrokkingConcurrency.CSharp.AssemblyInfoInputs.cache
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\GrokkingConcurrency.CSharp.AssemblyInfo.cs
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\GrokkingConcurrency.CSharp.csproj.CoreCompileInputs.cache
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\GrokkingConcurrency.CSharp.sourcelink.json
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\GrokkingConcurrency.CSharp.dll
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\refint\GrokkingConcurrency.CSharp.dll
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\GrokkingConcurrency.CSharp.pdb
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\csharp\src\obj\Debug\net8.0\ref\GrokkingConcurrency.CSharp.dll
