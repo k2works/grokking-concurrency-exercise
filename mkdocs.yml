@@ -108,3 +108,13 @@ nav:
       - Part VI - ノンブロッキング I/O: fsharp/part-6.md
       - Part VII - 非同期プログラミング: fsharp/part-7.md
       - Part VIII - 分散並列処理: fsharp/part-8.md
+  - Rust:
+      - 概要: rust/index.md
+      - Part I - 並行処理の基礎: rust/part-1.md
+      - Part II - プロセスとスレッド: rust/part-2.md
+      - Part III - マルチタスキングとスケジューリング: rust/part-3.md
+      - Part IV - タスク分解と並列パターン: rust/part-4.md
+      - Part V - 同期と排他制御: rust/part-5.md
+      - Part VI - ノンブロッキング I/O: rust/part-6.md
+      - Part VII - 非同期プログラミング: rust/part-7.md
+      - Part VIII - 分散並列処理: rust/part-8.md
