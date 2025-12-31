@@ -1,5 +1,5 @@
 site_name: Grokking Concurrency
-site_description: Python、Java、C#、Scala で学ぶ並行処理プログラミング
+site_description: Python、Java、C#、Scala、F# で学ぶ並行処理プログラミング
 site_author: Project Team
 repo_url: https://github.com/k2works/grokking-concurrency-exercise
 repo_name: grokking-concurrency-exercise
@@ -98,3 +98,13 @@ nav:
       - Part VI - ノンブロッキング I/O: scala/part-6.md
       - Part VII - 非同期プログラミング: scala/part-7.md
       - Part VIII - 分散並列処理: scala/part-8.md
+  - F#:
+      - 概要: fsharp/index.md
+      - Part I - 並行処理の基礎: fsharp/part-1.md
+      - Part II - プロセスとスレッド: fsharp/part-2.md
+      - Part III - マルチタスキングとスケジューリング: fsharp/part-3.md
+      - Part IV - タスク分解と並列パターン: fsharp/part-4.md
+      - Part V - 同期と排他制御: fsharp/part-5.md
+      - Part VI - ノンブロッキング I/O: fsharp/part-6.md
+      - Part VII - 非同期プログラミング: fsharp/part-7.md
+      - Part VIII - 分散並列処理: fsharp/part-8.md
