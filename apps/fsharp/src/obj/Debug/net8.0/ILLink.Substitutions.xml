@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="GrokkingConcurrency.FSharp">
+    <resource name="FSharpSignatureData.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpOptimizationData.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.GrokkingConcurrency.FSharp" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.GrokkingConcurrency.FSharp" action="remove"></resource>
+  </assembly>
+</linker>

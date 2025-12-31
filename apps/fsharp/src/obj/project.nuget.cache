@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "P5N3wonqCFw=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\PC202411-1\\IdeaProjects\\grokking-concurrency-exercise\\apps\\fsharp\\src\\GrokkingConcurrency.FSharp.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\PC202411-1\\.nuget\\packages\\fsharp.core\\10.0.101\\fsharp.core.10.0.101.nupkg.sha512"
+  ],
+  "logs": []
+}

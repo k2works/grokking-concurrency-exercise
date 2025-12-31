@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>GrokkingConcurrency.FSharp</name></assembly>
+<members>
+<member name="M:GrokkingConcurrency.Ch02.PasswordCracker.crackPassword(System.String,System.Int32)">
+<summary>
+ Crack password by brute force
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch02.PasswordCracker.checkPassword(System.String,System.String)">
+<summary>
+ Check if the password matches the given hash
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch02.PasswordCracker.getCryptoHash(System.String)">
+<summary>
+ Calculate SHA-256 hash of the given password
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch02.PasswordCracker.getCombinations(System.Int32)">
+<summary>
+ Generate all combinations of lowercase letters of the given length
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch04.ThreadBasics.startAndJoinAll(Microsoft.FSharp.Collections.FSharpList{System.Threading.Thread})">
+<summary>
+ Start all threads and wait for them to complete
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch04.ThreadBasics.createMultipleWorkers(System.Int32,Microsoft.FSharp.Core.FSharpFunc{System.Int32,Microsoft.FSharp.Core.Unit})">
+<summary>
+ Create multiple worker threads
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch04.ThreadBasics.createWorker(System.String,Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,Microsoft.FSharp.Core.Unit})">
+<summary>
+ Create a worker thread with the given name and task
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch05.PasswordCrackerParallel.crackPasswordParallel(System.String,System.Int32)">
+<summary>
+ Crack password using parallel execution
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch05.PasswordCrackerParallel.getChunks(System.Int32,System.Int32)">
+<summary>
+ Divide a range into chunks
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch06.GameLoop.run(Microsoft.FSharp.Collections.FSharpList{GrokkingConcurrency.Ch06.GameTask},System.Int32)">
+<summary>
+ Run game loop for specified number of frames
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch06.GameLoop.runOneFrame(Microsoft.FSharp.Collections.FSharpList{GrokkingConcurrency.Ch06.GameTask})">
+<summary>
+ Run all tasks in a single frame
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch06.GameLoop.reset(GrokkingConcurrency.Ch06.ProcessorFreeEvent)">
+<summary>
+ Reset the event
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch06.GameLoop.signal(GrokkingConcurrency.Ch06.ProcessorFreeEvent)">
+<summary>
+ Signal the event
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch06.GameLoop.waitForSignal(GrokkingConcurrency.Ch06.ProcessorFreeEvent)">
+<summary>
+ Wait for the event to be signaled
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch06.GameLoop.createProcessorFreeEvent">
+<summary>
+ Create a new processor free event
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch06.GameLoop.runTask(GrokkingConcurrency.Ch06.GameTask)">
+<summary>
+ Run a single task
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch07.VoteCounter.countVotesParallel(Microsoft.FSharp.Collections.FSharpList{System.String})">
+<summary>
+ Count votes using fork-join pattern
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch07.VoteCounter.mergeResults(Microsoft.FSharp.Collections.FSharpMap{System.String,System.Int32},Microsoft.FSharp.Collections.FSharpMap{System.String,System.Int32})">
+<summary>
+ Merge two vote count results
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch07.VoteCounter.countVotes(Microsoft.FSharp.Collections.FSharpList{System.String})">
+<summary>
+ Count votes sequentially
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch07.Pipeline.run``1(GrokkingConcurrency.Ch07.Pipeline{``0},Microsoft.FSharp.Collections.FSharpList{``0})">
+<summary>
+ Process data through all stages
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch07.Pipeline.addStage``1(System.String,Microsoft.FSharp.Core.FSharpFunc{System.Object,System.Object},GrokkingConcurrency.Ch07.Pipeline{``0})">
+<summary>
+ Add a stage to the pipeline
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch07.Pipeline.createPipeline``1">
+<summary>
+ Create a new empty pipeline
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch08.BankAccountModule.transfer(GrokkingConcurrency.Ch08.BankAccount,GrokkingConcurrency.Ch08.BankAccount,System.Int32)">
+<summary>
+ Transfer money between accounts atomically, avoiding deadlock
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch08.BankAccountModule.withdraw(GrokkingConcurrency.Ch08.BankAccount,System.Int32)">
+<summary>
+ Withdraw money from the account
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch08.BankAccountModule.deposit(GrokkingConcurrency.Ch08.BankAccount,System.Int32)">
+<summary>
+ Deposit money into the account
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch08.BankAccountModule.getBalance(GrokkingConcurrency.Ch08.BankAccount)">
+<summary>
+ Get the current balance
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch08.BankAccountModule.createAccount(System.Int32)">
+<summary>
+ Create a new bank account
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch13.WordCount.countWords(Microsoft.FSharp.Collections.FSharpList{System.String})">
+<summary>
+ MapReduce: Count words in multiple texts using parallel execution
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch13.WordCount.reduce(Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.String,System.Int32}})">
+<summary>
+ Reduce: Aggregate word counts
+</summary>
+</member>
+<member name="M:GrokkingConcurrency.Ch13.WordCount.map(System.String)">
+<summary>
+ Map: Convert text to (word, 1) pairs
+</summary>
+</member>
+</members>
+</doc>

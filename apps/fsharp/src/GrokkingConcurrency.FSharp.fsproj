@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Ch02/PasswordCracker.fs" />
+    <Compile Include="Ch04/ThreadBasics.fs" />
+    <Compile Include="Ch05/PasswordCrackerParallel.fs" />
+    <Compile Include="Ch06/GameLoop.fs" />
+    <Compile Include="Ch07/VoteCounter.fs" />
+    <Compile Include="Ch07/Pipeline.fs" />
+    <Compile Include="Ch08/BankAccount.fs" />
+    <Compile Include="Ch13/WordCount.fs" />
+  </ItemGroup>
+
+</Project>

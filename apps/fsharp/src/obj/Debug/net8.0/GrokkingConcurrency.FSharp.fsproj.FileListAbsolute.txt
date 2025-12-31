@@ -1,0 +1,14 @@
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\bin\Debug\net8.0\GrokkingConcurrency.FSharp.deps.json
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\bin\Debug\net8.0\GrokkingConcurrency.FSharp.dll
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\bin\Debug\net8.0\GrokkingConcurrency.FSharp.pdb
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\bin\Debug\net8.0\GrokkingConcurrency.FSharp.xml
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\GrokkingConcurrency.FSharp.fsproj.AssemblyReference.cache
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\GrokkingConcurrency.FSharp.AssemblyInfoInputs.cache
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\GrokkingConcurrency.FSharp.AssemblyInfo.fs
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\GrokkingConcurrency.FSharp.fsproj.CoreCompileInputs.cache
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\GrokkingConcurrency.FSharp.sourcelink.json
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\GrokkingConcurrency.FSharp.dll
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\refint\GrokkingConcurrency.FSharp.dll
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\GrokkingConcurrency.FSharp.xml
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\GrokkingConcurrency.FSharp.pdb
+C:\Users\PC202411-1\IdeaProjects\grokking-concurrency-exercise\apps\fsharp\src\obj\Debug\net8.0\ref\GrokkingConcurrency.FSharp.dll
