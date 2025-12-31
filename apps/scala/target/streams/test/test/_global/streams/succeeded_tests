@@ -1,0 +1,10 @@
+#Successful Tests
+#Wed Dec 31 10:28:36 JST 2025
+concurrency.BankAccountSpec=1767144515990
+concurrency.GameLoopSpec=1767144516038
+concurrency.PasswordCrackerParallelSpec=1767144516035
+concurrency.PasswordCrackerSpec=1767144516038
+concurrency.PipelineSpec=1767144515990
+concurrency.ThreadBasicsSpec=1767144515990
+concurrency.VoteCounterSpec=1767144516022
+concurrency.WordCountSpec=1767144516052

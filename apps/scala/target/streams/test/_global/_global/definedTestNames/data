@@ -1,0 +1,1 @@
+["concurrency.PasswordCrackerParallelSpec","concurrency.ThreadBasicsSpec","concurrency.PasswordCrackerSpec","concurrency.VoteCounterSpec","concurrency.GameLoopSpec","concurrency.BankAccountSpec","concurrency.PipelineSpec","concurrency.WordCountSpec"]
