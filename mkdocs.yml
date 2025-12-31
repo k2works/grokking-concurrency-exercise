@@ -118,3 +118,13 @@ nav:
       - Part VI - ノンブロッキング I/O: rust/part-6.md
       - Part VII - 非同期プログラミング: rust/part-7.md
       - Part VIII - 分散並列処理: rust/part-8.md
+  - Haskell:
+      - 概要: haskell/index.md
+      - Part I - 並行処理の基礎: haskell/part-1.md
+      - Part II - プロセスとスレッド: haskell/part-2.md
+      - Part III - マルチタスキングとスケジューリング: haskell/part-3.md
+      - Part IV - タスク分解と並列パターン: haskell/part-4.md
+      - Part V - 同期と排他制御: haskell/part-5.md
+      - Part VI - ノンブロッキング I/O: haskell/part-6.md
+      - Part VII - 非同期プログラミング: haskell/part-7.md
+      - Part VIII - 分散並列処理: haskell/part-8.md
