@@ -1,0 +1,9 @@
+target/
+classes/
+checkouts/
+*.jar
+*.class
+*.log
+.lein-*
+.nrepl-port
+.cpcache/
