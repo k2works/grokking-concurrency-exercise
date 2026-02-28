@@ -10,6 +10,25 @@ Python、Java、C#、Scala、F#、Rust、Haskell、Clojure で学ぶ並行処理
 
 ---
 
+## 多言語統合解説
+
+8 つの言語を横断的に比較し、並行処理の**本質**と**言語固有の表現**を統合的に解説します。
+
+| Part | トピック | 統合記事 |
+|------|----------|----------|
+| I | 並行処理の基礎 | [逐次処理の言語別比較](all/part-1-ch02-sequential.md) |
+| II | プロセスとスレッド | [スレッド生成・管理の API 比較](all/part-2-ch04-05-threads.md) |
+| III | マルチタスキング | [イベント駆動モデルの比較](all/part-3-ch06-multitasking.md) |
+| IV | 並列パターン | [Fork/Join・パイプラインの比較](all/part-4-ch07-parallel-patterns.md) |
+| V | 同期と排他制御 | [Lock/STM/所有権の比較](all/part-5-ch08-09-synchronization.md) |
+| VI | ノンブロッキング I/O | [Reactor パターンと I/O モデル比較](all/part-6-ch10-11-nonblocking-io.md) |
+| VII | 非同期プログラミング | [async/await と Future/Promise 比較](all/part-7-ch12-async.md) |
+| VIII | 分散並列処理 | [MapReduce と並列コレクション比較](all/part-8-ch13-mapreduce.md) |
+
+> 詳細は [多言語統合解説 概要](all/index.md) を参照
+
+---
+
 ## 言語別学習ガイド
 
 | 言語 | 特徴 | 主要な並行処理機能 |

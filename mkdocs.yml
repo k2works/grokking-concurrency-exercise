@@ -58,6 +58,16 @@ plugins:
 
 nav:
   - Home: index.md
+  - 多言語統合:
+      - 概要: all/index.md
+      - Part I - 並行処理の基礎: all/part-1-ch02-sequential.md
+      - Part II - プロセスとスレッド: all/part-2-ch04-05-threads.md
+      - Part III - マルチタスキング: all/part-3-ch06-multitasking.md
+      - Part IV - 並列パターン: all/part-4-ch07-parallel-patterns.md
+      - Part V - 同期と排他制御: all/part-5-ch08-09-synchronization.md
+      - Part VI - ノンブロッキング I/O: all/part-6-ch10-11-nonblocking-io.md
+      - Part VII - 非同期プログラミング: all/part-7-ch12-async.md
+      - Part VIII - 分散並列処理: all/part-8-ch13-mapreduce.md
   - Python:
       - 概要: python/index.md
       - Part I - 並行処理の基礎: python/part-1.md
